@@ -1,0 +1,37 @@
+name: bind
+base: core22
+version: 'jammy'
+summary: Classic, full-featured and mostly standards-compliant DNS.
+description: |
+  BIND is a suite of software for interacting with the Domain Name System (DNS).
+  Its most prominent component, named, performs both of the main DNS server roles,
+  acting as an authoritative name server for DNS zones and as a recursive resolver
+  in the network.
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+parts:
+  bind:
+    plugin: nil
+    stage-packages:
+      - bind9
+      - bind9-utils
+  service-files:
+    plugin: dump
+    source: service
+    override-prime: |
+      craftctl default
+      chmod +rx $CRAFT_PRIME/bin/*
+
+apps:
+  named:
+    command: /bin/named-start
+    daemon: simple
+    restart-condition: on-failure
+    refresh-mode: endure
+    stop-mode: sigterm
+    reload-command: /bin/named-reload
+    stop-command: bin/named-stop
+    plugs:
+      - network
+      - network-bind
