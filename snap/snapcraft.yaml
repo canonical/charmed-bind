@@ -2,7 +2,7 @@ name: bind
 base: core22
 version: 'jammy'
 license: Apache-2.0
-summary: Classic, full-featured and mostly standards-compliant DNS.
+summary: Charmed BIND for Charmed Operators
 description: |
   This is a snap that bundles BIND together with other tools of its ecosystem in order
   to be used in Charmed Operators, providing automated operations management from day 0 to day 2 on
