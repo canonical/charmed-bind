@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -xe
+
+mkdir -p "$SNAP_DATA/etc"
+mkdir -p "$SNAP_DATA/usr/share"
+mkdir -p "$SNAP_DATA/var/cache/bind"
+
+# Copy the config files to SNAP_DATA
+cp -rf --preserve=mode "$SNAP/etc/bind" "$SNAP_DATA/etc/bind"
+cp -rf --preserve=mode "$SNAP/usr/share/dns" "$SNAP_DATA/usr/share"
+
+# Fix the config files to take the new location into account
+SNAP_CURRENT="/var/snap/$SNAP_NAME/current"
+for file in $SNAP_DATA/etc/bind/* ; do
+  sed -i "s#/var/#$SNAP_CURRENT/var/#g" "$file"
+  sed -i "s#/etc/#$SNAP_CURRENT/etc/#g" "$file"
+  sed -i "s#/usr/share/#$SNAP_CURRENT/usr/share/#g" "$file"
+done
+
+# Create rndc.conf
+"$SNAP/usr/sbin/rndc-confgen" > "$SNAP_DATA/etc/bind/rndc.conf"
+
+# Amend named.conf with the generated rndc configuration
+cat "$SNAP_DATA/etc/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' >> "$SNAP_DATA/etc/bind/named.conf"
