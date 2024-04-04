@@ -1,4 +1,4 @@
-name: bind
+name: charmed-bind
 base: core22
 version: 'jammy'
 license: Apache-2.0
@@ -15,6 +15,9 @@ description: |
   in the network.
 grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: strict
+architectures:
+  - build-on: [amd64]
+    build-for: [amd64]
 
 parts:
   bind:
