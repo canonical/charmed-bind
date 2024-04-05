@@ -33,12 +33,12 @@ parts:
 
 apps:
   named:
-    command: /bin/named-start
+    command: bin/named-start
     daemon: simple
     restart-condition: on-failure
     refresh-mode: endure
     stop-mode: sigterm
-    reload-command: /bin/named-reload
+    reload-command: bin/named-reload
     stop-command: bin/named-stop
     plugs:
       - network
