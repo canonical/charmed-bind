@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -xe
+exec "$SNAP/usr/sbin/nginx" "-c" "$SNAP/nginx/nginx.conf" "-s" "reload" "-g" "daemon off;"

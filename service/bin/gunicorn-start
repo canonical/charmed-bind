@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -xe
+exec "$SNAP/usr/bin/gunicorn" --chdir "$SNAP_DATA/api" --bind unix:/tmp/gunicorn.sock dns.wsgi --capture-output --log-level=debug
