@@ -23,7 +23,7 @@ jobs:
       - name: Run Django tests
         run: |
           cd api
-          python3 manage.py test
+          DJANGO_SECRET_KEY="testkey" python3 manage.py test
 
   build:
     name: Build snap

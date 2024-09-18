@@ -10,8 +10,8 @@ class Command(BaseCommand):
         parser.add_argument('zone', help='Zone')
 
     def handle(self, *args, **options):
-        acl = Acl.objects.filter(service_account=options['service_account'], zone=options['zone']).first()
-        if acl:
+        try:
+            Acl.objects.get(service_account=options['service_account'], zone=options['zone'])
             self.stdout.write('ACL exists')
-        else:
+        except Acl.DoesNotExist:
             self.stdout.write('ACL does not exist')
