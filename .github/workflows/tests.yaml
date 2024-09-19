@@ -51,5 +51,5 @@ jobs:
 
       - name: Check admin interface
         run: |
-          curl -f --retry 5 --retry-delay 10 http://localhost:8080/admin/login
           curl -f --retry 5 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
+          curl -f --retry 5 --retry-delay 10 http://localhost:8080/admin/login/
