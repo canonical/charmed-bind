@@ -25,11 +25,21 @@ jobs:
           cd api
           DJANGO_SECRET_KEY="testkey" python3 manage.py test
 
+  build-snap:
+    name: Build snap
+    uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v16
+
   snap-tests:
+    name: Test the resulting snap
     runs-on: ubuntu-latest
+    needs:
+      - build-snap
     steps:
-      - name: Build snap
-        uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v16
+      - name: Download snap package(s)
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ${{ needs.build.outputs.artifact-prefix }}-*
+          merge-multiple: true
 
       - name: Install snap
         run: |
