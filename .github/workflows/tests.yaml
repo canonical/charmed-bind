@@ -38,7 +38,7 @@ jobs:
       - name: Download snap package(s)
         uses: actions/download-artifact@v4
         with:
-          pattern: ${{ needs.build.outputs.artifact-prefix }}-*
+          pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
 
       - name: Install snap
