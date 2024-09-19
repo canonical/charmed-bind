@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  pull_request:
+
+jobs:
+  django-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+
+      - name: Run Django tests
+        run: |
+          cd api
+          DJANGO_SECRET_KEY="testkey" python3 manage.py test
+
+  snap-tests:
+    - name: Build snap
+      uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v16
+
+    - name: Install snap
+      run: |
+        snap install --dangerous charmed-bind_*.snap
+
+    - name: Verify that all services are active
+      run: |
+        snap services charmed-bind | awk 'NR > 1 && $3 != "active" {exit 1}'
+
+    - name: Check admin interface
+      run: |
+        curl -f http://localhost:8080/admin
+        curl -f http://localhost:8080/static/admin/css/base.css

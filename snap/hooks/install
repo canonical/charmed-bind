@@ -2,6 +2,7 @@
 
 set -xe
 
+# Create some directories for bind
 mkdir -p "$SNAP_DATA/etc"
 mkdir -p "$SNAP_DATA/usr/share"
 mkdir -p "$SNAP_DATA/var/cache/bind"
@@ -23,3 +24,25 @@ done
 
 # Amend named.conf with the generated rndc configuration
 cat "$SNAP_DATA/etc/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' >> "$SNAP_DATA/etc/bind/named.conf"
+
+# Copy nginx configuration
+cp -r --preserve=mode "$SNAP/nginx" "$SNAP_DATA/nginx"
+cp -r --preserve=mode "$SNAP/api" "$SNAP_DATA/api"
+
+# Create some directories for nginx
+mkdir -p $SNAP_DATA/nginx/tmp/body
+mkdir -p $SNAP_DATA/nginx/tmp/nginx-proxy
+mkdir -p $SNAP_DATA/nginx/tmp/nginx-fastcgi
+mkdir -p $SNAP_DATA/nginx/tmp/nginx-uwsgi
+mkdir -p $SNAP_DATA/nginx/tmp/nginx-scgi
+
+# Edit nginx configuration
+sed -i \
+  -e "s|<SNAP_DATA>|${SNAP_DATA}|g" \
+  -e "s|<SNAP_COMMON>|${SNAP_COMMON}|g" \
+  "$SNAP_DATA/nginx/nginx.conf"
+
+# Change ownership of some snap directories to allow snap_daemon to read/write
+# https://snapcraft.io/docs/system-usernames
+chown -R 584788:root $SNAP_DATA/nginx
+chown -R 584788:root $SNAP_DATA/api
