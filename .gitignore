@@ -1,3 +1,5 @@
 *.snap
 **/__pycache__/
 api/static/
+api/venv/
+api/db.sqlite3
