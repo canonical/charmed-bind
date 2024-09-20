@@ -27,7 +27,6 @@ cat "$SNAP_DATA/etc/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub
 
 # Copy nginx configuration
 cp -r --preserve=mode "$SNAP/nginx" "$SNAP_DATA/nginx"
-cp -r --preserve=mode "$SNAP/api" "$SNAP_DATA/api"
 
 # Create some directories for nginx
 mkdir -p $SNAP_DATA/nginx/tmp/body
@@ -41,6 +40,15 @@ sed -i \
   -e "s|<SNAP_DATA>|${SNAP_DATA}|g" \
   -e "s|<SNAP_COMMON>|${SNAP_COMMON}|g" \
   "$SNAP_DATA/nginx/nginx.conf"
+
+# Create the static directory for django
+cp -r "$SNAP/api" "$SNAP_DATA/"
+chmod -R 755 $SNAP_DATA/api
+
+# Prepare the django app
+cd $SNAP_DATA/api
+DJANGO_SECRET_KEY="testkey" python3 manage.py collectstatic --noinput
+DJANGO_SECRET_KEY="testkey" python manage.py migrate --noinput
 
 # Change ownership of some snap directories to allow snap_daemon to read/write
 # https://snapcraft.io/docs/system-usernames
