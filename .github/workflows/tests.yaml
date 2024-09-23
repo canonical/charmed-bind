@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -40,6 +40,9 @@ jobs:
         with:
           pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
+
+      - name: Build snap
+        uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v21
 
       - name: Install snap
         run: |
