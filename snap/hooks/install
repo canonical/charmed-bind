@@ -54,3 +54,7 @@ DJANGO_SECRET_KEY="testkey" python manage.py migrate --noinput
 # https://snapcraft.io/docs/system-usernames
 chown -R 584788:root $SNAP_DATA/nginx
 chown -R 584788:root $SNAP_DATA/api
+
+# set default configuration values
+snapctl set django-debug="false"
+snapctl set django-allowed-hosts="['localhost', '127.0.0.1', '0.0.0.0']"
