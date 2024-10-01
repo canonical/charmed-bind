@@ -27,7 +27,7 @@ jobs:
 
   build-snap:
     name: Build snap
-    uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v16
+    uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v22
 
   snap-tests:
     name: Test the resulting snap
