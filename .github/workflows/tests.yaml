@@ -41,9 +41,6 @@ jobs:
           pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
 
-      - name: Build snap
-        uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v22
-
       - name: Install snap
         run: |
           sudo snap install --dangerous charmed-bind_*.snap
@@ -54,5 +51,6 @@ jobs:
 
       - name: Check admin interface
         run: |
-          curl --retry 5 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
-          curl --retry 5 --retry-delay 10 http://localhost:8080/admin/login/
+          sleep 60 # wait a bit for things to start
+          curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
+          curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/admin/login/

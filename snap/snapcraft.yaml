@@ -50,6 +50,7 @@ parts:
       - gunicorn
       - nginx-core
       - util-linux  # contains the setpriv utility
+      - python3
     stage:
       # Remove scripts that we'll be replacing with our own
       - -etc/nginx/nginx.conf
@@ -81,3 +82,5 @@ apps:
     command: bin/nginx-start
     plugs: [network, network-bind, home]
     reload-command: bin/nginx-reload
+  manage:
+    command: api/manage.py
