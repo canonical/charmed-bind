@@ -83,4 +83,4 @@ apps:
     plugs: [network, network-bind, home]
     reload-command: bin/nginx-reload
   manage:
-    command: api/manage.py
+    command: bin/manage
