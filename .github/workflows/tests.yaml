@@ -51,7 +51,9 @@ jobs:
 
       - name: Check admin interface
         run: |
-          sudo snap set charmed-bind django-allowed-hosts="['localhost']"
           sleep 60 # wait a bit for things to start
+          sudo snap set charmed-bind django-allowed-hosts="['localhost', '*']"
+          sudo snap restart charmed-bind
+          sleep 10 # wait a bit for things to restart
           curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
           curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/admin/login/
