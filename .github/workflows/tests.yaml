@@ -51,6 +51,7 @@ jobs:
 
       - name: Check admin interface
         run: |
+          sudo snap set django-allowed-hosts="['*']"
           sleep 60 # wait a bit for things to start
           curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
           curl --fail-with-body --retry 5 --retry-delay 10 http://localhost:8080/admin/login/
