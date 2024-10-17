@@ -30,8 +30,7 @@ try:
     env_allowed_hosts = json.loads(os.getenv("DJANGO_ALLOWED_HOSTS", "[]"))
 except json.decoder.JSONDecodeError:
     env_allowed_hosts = []
-ALLOWED_HOSTS = env_allowed_hosts + ["localhost", "127.0.0.1", "0.0.0.0"]
-
+ALLOWED_HOSTS = env_allowed_hosts
 
 # Application definition
 
