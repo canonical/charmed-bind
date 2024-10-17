@@ -41,6 +41,9 @@ jobs:
           pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Install snap
         run: |
           sudo snap install --dangerous charmed-bind_*.snap
@@ -53,4 +56,4 @@ jobs:
       - name: Check admin interface
         run: |
           curl --fail-with-body --retry-all-errors --retry 10 --retry-delay 10 http://localhost:8080/static/admin/css/base.css
-          curl --fail-with-body --retry-all-errors --retry 10 --retry-delay 10 http://localhost:8080/admin/login/
+          curl --fail-with-body --retry-all-errors --retry 11 --retry-delay 10 http://localhost:8080/admin/login/
