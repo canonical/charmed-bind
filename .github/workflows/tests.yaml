@@ -41,12 +41,6 @@ jobs:
           pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Install snap
         run: |
           sudo snap install --dangerous charmed-bind_*.snap
