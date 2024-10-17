@@ -1,4 +1,4 @@
 #!/bin/sh
 
 set -xe
-exec "$SNAP/usr/sbin/rndc" -c "$SNAP_DATA/etc/bind/rndc.conf" reload
+exec "$SNAP/usr/sbin/rndc" -c "$SNAP_COMMON/bind/rndc.conf" reload
