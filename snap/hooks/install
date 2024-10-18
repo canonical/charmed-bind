@@ -13,7 +13,7 @@ cp -rf --preserve=mode "$SNAP/usr/share/dns" "$SNAP_DATA/usr/share"
 
 # Fix the config files to take the new location into account
 SNAP_CURRENT="/var/snap/$SNAP_NAME/current"
-for file in $SNAP_DATA/etc/bind/* ; do
+for file in "$SNAP_DATA/etc/bind"/* ; do
   sed -i "s#/var/#$SNAP_CURRENT/var/#g" "$file"
   sed -i "s#/etc/#$SNAP_CURRENT/etc/#g" "$file"
   sed -i "s#/usr/share/#$SNAP_CURRENT/usr/share/#g" "$file"
@@ -23,17 +23,17 @@ done
 "$SNAP/usr/sbin/rndc-confgen" > "$SNAP_DATA/etc/bind/rndc.conf"
 
 # Amend named.conf with the generated rndc configuration
-cat "$SNAP_DATA/etc/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' >> "$SNAP_DATA/etc/bind/named.conf"
+awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' < "$SNAP_DATA/etc/bind/rndc.conf" >> "$SNAP_DATA/etc/bind/named.conf"
 
 # Copy nginx configuration
 cp -r --preserve=mode "$SNAP/nginx" "$SNAP_DATA/nginx"
 
 # Create some directories for nginx
-mkdir -p $SNAP_DATA/nginx/tmp/body
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-proxy
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-fastcgi
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-uwsgi
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-scgi
+mkdir -p "$SNAP_DATA/nginx/tmp/body"
+mkdir -p "$SNAP_DATA/nginx/tmp/nginx-proxy"
+mkdir -p "$SNAP_DATA/nginx/tmp/nginx-fastcgi"
+mkdir -p "$SNAP_DATA/nginx/tmp/nginx-uwsgi"
+mkdir -p "$SNAP_DATA/nginx/tmp/nginx-scgi"
 
 # Edit nginx configuration
 sed -i \
@@ -43,17 +43,17 @@ sed -i \
 
 # Create the static directory for django
 cp -r "$SNAP/api" "$SNAP_DATA/"
-chmod -R 755 $SNAP_DATA/api
+chmod -R 755 "$SNAP_DATA/api"
 
 # Prepare the django app
-cd $SNAP_DATA/api
+cd "$SNAP_DATA/api"
 DJANGO_SECRET_KEY="testkey" python3 manage.py collectstatic --noinput
 DJANGO_SECRET_KEY="testkey" python manage.py migrate --noinput
 
 # Change ownership of some snap directories to allow snap_daemon to read/write
 # https://snapcraft.io/docs/system-usernames
-chown -R 584788:root $SNAP_DATA/nginx
-chown -R 584788:root $SNAP_DATA/api
+chown -R 584788:root "$SNAP_DATA/nginx"
+chown -R 584788:root "$SNAP_DATA/api"
 
 # set default configuration values
 snapctl set django-debug='false'
