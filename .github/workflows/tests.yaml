@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run ShellCheck
         run: |
-          shellcheck services/bin/* snap/hooks/*
+          shellcheck service/bin/* snap/hooks/*
 
   build-snap:
     name: Build snap
