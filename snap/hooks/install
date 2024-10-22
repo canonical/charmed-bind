@@ -2,58 +2,32 @@
 
 set -xe
 
-# Create some directories for bind
-mkdir -p "$SNAP_DATA/etc"
-mkdir -p "$SNAP_DATA/usr/share"
-mkdir -p "$SNAP_DATA/var/cache/bind"
+$SNAP/bin/prepare
 
-# Copy the config files to SNAP_DATA
-cp -rf --preserve=mode "$SNAP/etc/bind" "$SNAP_DATA/etc/bind"
-cp -rf --preserve=mode "$SNAP/usr/share/dns" "$SNAP_DATA/usr/share"
+# Create some directories
+mkdir -p $SNAP_COMMON/api
+
+# Copy the bind config files to SNAP_COMMON
+cp -rf --preserve=mode "$SNAP/etc/bind" "$SNAP_COMMON/bind"
 
 # Fix the config files to take the new location into account
 SNAP_CURRENT="/var/snap/$SNAP_NAME/current"
-for file in $SNAP_DATA/etc/bind/* ; do
+for file in $SNAP_COMMON/bind/* ; do
   sed -i "s#/var/#$SNAP_CURRENT/var/#g" "$file"
-  sed -i "s#/etc/#$SNAP_CURRENT/etc/#g" "$file"
   sed -i "s#/usr/share/#$SNAP_CURRENT/usr/share/#g" "$file"
+  sed -i "s#/etc/#$SNAP_COMMON/#g" "$file"
 done
 
 # Create rndc.conf
-"$SNAP/usr/sbin/rndc-confgen" > "$SNAP_DATA/etc/bind/rndc.conf"
+"$SNAP/usr/sbin/rndc-confgen" > "$SNAP_COMMON/bind/rndc.conf"
 
 # Amend named.conf with the generated rndc configuration
-cat "$SNAP_DATA/etc/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' >> "$SNAP_DATA/etc/bind/named.conf"
+cat "$SNAP_COMMON/bind/rndc.conf" | awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' >> "$SNAP_COMMON/bind/named.conf"
 
-# Copy nginx configuration
-cp -r --preserve=mode "$SNAP/nginx" "$SNAP_DATA/nginx"
-
-# Create some directories for nginx
-mkdir -p $SNAP_DATA/nginx/tmp/body
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-proxy
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-fastcgi
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-uwsgi
-mkdir -p $SNAP_DATA/nginx/tmp/nginx-scgi
-
-# Edit nginx configuration
-sed -i \
-  -e "s|<SNAP_DATA>|${SNAP_DATA}|g" \
-  -e "s|<SNAP_COMMON>|${SNAP_COMMON}|g" \
-  "$SNAP_DATA/nginx/nginx.conf"
-
-# Create the static directory for django
-cp -r "$SNAP/api" "$SNAP_DATA/"
-chmod -R 755 $SNAP_DATA/api
-
-# Prepare the django app
-cd $SNAP_DATA/api
-DJANGO_SECRET_KEY="testkey" python3 manage.py collectstatic --noinput
-DJANGO_SECRET_KEY="testkey" python manage.py migrate --noinput
-
-# Change ownership of some snap directories to allow snap_daemon to read/write
-# https://snapcraft.io/docs/system-usernames
-chown -R 584788:root $SNAP_DATA/nginx
-chown -R 584788:root $SNAP_DATA/api
+# Prepare the django database
+export DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
+export DJANGO_SECRET_KEY="testkey"
+python3 $SNAP_DATA/api/manage.py migrate --noinput
 
 # set default configuration values
 snapctl set django-debug='false'
