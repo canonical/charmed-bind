@@ -8,4 +8,4 @@ $SNAP/bin/prepare
 cd $SNAP_DATA/api
 export DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
 export DJANGO_SECRET_KEY="testkey"
-python manage.py migrate --noinput
+python3 manage.py migrate --noinput
