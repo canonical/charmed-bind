@@ -13,4 +13,6 @@ DJANGO_ALLOWED_HOSTS="$(snapctl get django-allowed-hosts)"
 export DJANGO_ALLOWED_HOSTS
 DJANGO_LOG_LEVEL="$(snapctl get django-log-level)"
 export DJANGO_LOG_LEVEL
+DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
+export DJANGO_DATABASE_PATH
 exec "$SNAP/usr/bin/gunicorn" --chdir "$SNAP_DATA/api" --bind unix:/tmp/gunicorn.sock dns.wsgi --capture-output --log-level=debug
