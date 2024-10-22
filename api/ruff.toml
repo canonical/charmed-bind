@@ -1,4 +1,3 @@
-[tool.ruff]
 # Exclude directories
 exclude = [
   ".git",
@@ -19,7 +18,8 @@ indent-width = 4
 # Target Python version
 target-version = "py38"
 
-[tool.ruff.lint]
+[lint]
+
 extend-ignore = [
     "D203",  # 1 blank line required between top-level functions
     "D204",  # 1 blank line required between class definitions
@@ -49,12 +49,12 @@ select = [
 ]
 
 # Formatting options
-[tool.ruff.format]
+[format]
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
 # McCabe complexity
-[tool.ruff.lint.mccabe]
+[lint.mccabe]
 max-complexity = 10
