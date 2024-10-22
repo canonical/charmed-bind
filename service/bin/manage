@@ -10,4 +10,4 @@ DJANGO_LOG_LEVEL="$(snapctl get django-log-level)"
 export DJANGO_LOG_LEVEL
 DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
 export DJANGO_DATABASE_PATH
-exec "$SNAP/usr/bin/setpriv" --clear-groups --reuid snap_daemon --regid snap_daemon -- python3 "$SNAP_DATA/api/manage.py" $@
+exec "$SNAP/usr/bin/setpriv" --clear-groups --reuid snap_daemon --regid snap_daemon -- python3 "$SNAP_DATA/api/manage.py" "$@"
