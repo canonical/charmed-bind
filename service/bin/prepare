@@ -49,10 +49,9 @@ cp -r "$SNAP/api" "$SNAP_DATA/"
 chmod -R 755 $SNAP_DATA/api
 
 # Prepare the django app
-cd $SNAP_DATA/api
 export DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
 export DJANGO_SECRET_KEY="testkey"
-python3 manage.py collectstatic --noinput
+python3 $SNAP_DATA/api/manage.py collectstatic --noinput
 
 # Change ownership of some snap directories to allow snap_daemon to read/write
 # https://snapcraft.io/docs/system-usernames
