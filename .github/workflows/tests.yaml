@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,6 +25,34 @@ jobs:
           cd api
           DJANGO_SECRET_KEY="testkey" python3 manage.py test
 
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.1
+      - name: Run ShellCheck
+        run: |
+          shellcheck service/bin/* snap/hooks/*
+
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff
+
+      - name: Run Ruff
+        run: |
+          ruff check api/
+
   build-snap:
     name: Build snap
     uses: canonical/data-platform-workflows/.github/workflows/build_snap.yaml@v23
@@ -36,7 +64,7 @@ jobs:
       - build-snap
     steps:
       - name: Download snap package(s)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.8
         with:
           pattern: ${{ needs.build-snap.outputs.artifact-prefix }}-*
           merge-multiple: true
