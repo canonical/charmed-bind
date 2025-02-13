@@ -23,12 +23,3 @@ done
 
 # Amend named.conf with the generated rndc configuration
 awk '/^# (Start|End|Use)/ {next} /^#/ {sub(/^# /, ""); print}' < "$SNAP_COMMON/bind/rndc.conf" >> "$SNAP_COMMON/bind/named.conf"
-
-# Prepare the django database
-export DJANGO_DATABASE_PATH="$SNAP_COMMON/api/db.sqlite3"
-export DJANGO_SECRET_KEY="testkey"
-python3 "$SNAP_DATA/api/manage.py" migrate --noinput
-
-# set default configuration values
-snapctl set django-debug='false'
-snapctl set django-allowed-hosts='["localhost", "127.0.0.1", "0.0.0.0"]'
