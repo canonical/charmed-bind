@@ -30,34 +30,12 @@ parts:
   service-files:
     plugin: dump
     source: service
+    stage-packages:
+      - util-linux  # contains the setpriv utility
+      - python3
     override-prime: |
       craftctl default
       chmod +rx $CRAFT_PRIME/bin/*
-  src:
-    plugin: dump
-    source: .
-    override-stage: |
-      craftctl default
-      chmod 775 -R api
-    prime:
-      - api
-  requirements:
-    plugin: python
-    source: api
-    python-requirements:
-      - requirements.txt
-    stage-packages:
-      - gunicorn
-      - nginx-core
-      - util-linux  # contains the setpriv utility
-      - python3
-    stage:
-      # Remove scripts that we'll be replacing with our own
-      - -etc/nginx/nginx.conf
-  config:
-    after: [requirements]
-    plugin: dump
-    source: config
 
 apps:
   named:
@@ -71,16 +49,3 @@ apps:
     plugs:
       - network
       - network-bind
-  gunicorn:
-    command: bin/gunicorn-start
-    daemon: simple
-    plugs: [network, network-bind, home]
-    environment:
-      PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
-  nginx:
-    daemon: simple
-    command: bin/nginx-start
-    plugs: [network, network-bind, home]
-    reload-command: bin/nginx-reload
-  manage:
-    command: bin/manage
